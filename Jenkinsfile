@@ -1,4 +1,5 @@
 pipeline {
+    agent any
     environment {
         REPO_NAME = 'jenkins-test'
         DOCKER_TAG = 'latest'
