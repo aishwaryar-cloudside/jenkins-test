@@ -1,9 +1,9 @@
 pipeline {
     agent any // Define the agent that will execute the pipeline
     environment {
-        REPO_NAME = 'your-docker-repo-name' // Replace with your actual Docker repo name
+        REPO_NAME = 'jenkins-test' // Replace with your actual Docker repo name
         DOCKER_TAG = 'latest' // Replace with your desired Docker tag
-        GCP_REGION = 'your-gcp-region' // Replace with your GCP region
+        GCP_REGION = 'asia-south1' // Replace with your GCP region
         GCP_ARTIFACT_REGISTRY = "asia-south1-docker.pkg.dev/gamerjiautomations/sample-jenkins-test" // Update this with your actual Artifact Registry pathasia-south1-docker.pkg.dev/gamerjiautomations/sample-jenkins-test
     }
     stages {
