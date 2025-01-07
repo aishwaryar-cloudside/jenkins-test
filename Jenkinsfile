@@ -1,7 +1,4 @@
 pipeline {
-    agent {
-        label 'docker' // Ensure the Jenkins node is labeled as 'docker'
-    }
     environment {
         REPO_NAME = 'jenkins-test'
         DOCKER_TAG = 'latest'
