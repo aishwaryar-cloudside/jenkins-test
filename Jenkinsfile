@@ -7,7 +7,7 @@ pipeline {
         GCP_REGION = "asia-south1"
         GCP_ARTIFACT_REGISTRY = "asia-south1-docker.pkg.dev/gamerjiautomations/sample-jenkins-test"
         GCP_PROJECT_ID = "gamerjiautomations"
-        APPROVER_EMAIL = 'megha.sharma@thecloudside.com'
+        APPROVER_EMAIL = 'aishwarya.r@thecloudside.com'
         PM1_EMAIL = 'aishwarya.r@thecloudside.com'
         ADMIN_EMAIL = 'aishwarya.r@thecloudside.com'
         JOB_URL = "${env.JENKINS_URL}job/${env.JOB_NAME}/"
