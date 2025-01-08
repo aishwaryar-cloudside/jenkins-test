@@ -12,16 +12,18 @@ pipeline {
         ADMIN_EMAIL = 'aishwarya.r@thecloudside.com'
         JOB_URL = "${env.JENKINS_URL}job/${env.JOB_NAME}/"
     }
+    parameters {
+        choice(name: 'deploy', choices: ['dev', 'prod'], description: 'Environment to deploy')
+    }
     stages {
         stage('Prepare') {
             steps {
                 script {
-                    echo "${env.BUILD_NUMBER}"
-                    echo "${env.GIT_COMMIT}"
-                    echo "${env.BRANCH_NAME}"
-                    echo "${env.BUILD_TAG}"
-                    echo "${env.JOB_NAME}"
-                    echo "Commit ID: ${env.COMMIT_ID}"
+                    echo "Build Number: ${env.BUILD_NUMBER}"
+                    echo "Commit ID: ${env.GIT_COMMIT}"
+                    echo "Branch Name: ${env.BRANCH_NAME}"
+                    echo "Build Tag: ${env.BUILD_TAG}"
+                    echo "Job Name: ${env.JOB_NAME}"
                     sh "printenv"
                 }
             }
@@ -29,15 +31,12 @@ pipeline {
                 always {
                     echo 'Post-build actions completed'
                 }
-                failure {
-                    echo 'Sending failure notification'
-                }
             }
         }
 
         stage('First Approval') {
             when {
-                expression { params.deploy.toString() == "prod" }
+                expression { params.deploy == "prod" }
             }
             steps {
                 script {
@@ -48,7 +47,7 @@ pipeline {
 
         stage('Final Approval') {
             when {
-                expression { params.deploy.toString() == "prod" }
+                expression { params.deploy == "prod" }
             }
             steps {
                 script {
@@ -78,23 +77,24 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    if (params.deploy.toString() == "prod") {
+                    if (params.deploy == "prod") {
                         input message: "Deploy to production?", ok: "Deploy"
                     }
-                    sh "docker build -t gcr.io/${GCP_PROJECT_ID}/${REPO_NAME}:${DOCKER_TAG} ."
+                    sh "docker build -t ${GCP_ARTIFACT_REGISTRY}/${REPO_NAME}:${DOCKER_TAG} ."
                 }
             }
         }
 
-        stage('Push to GCR') {
+        stage('Push Docker Image to GCR') {
             steps {
                 script {
-                    sh "docker image ls"
-                    sh "gcloud auth configure-docker"
-                    sh "docker push gcr.io/${GCP_PROJECT_ID}/${REPO_NAME}:${DOCKER_TAG}"
+                    sh """
+                        gcloud auth configure-docker ${GCP_REGION}-docker.pkg.dev --quiet
+                        docker push ${GCP_ARTIFACT_REGISTRY}/${REPO_NAME}:${DOCKER_TAG}
+                    """
                 }
             }
         }
