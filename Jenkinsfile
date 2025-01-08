@@ -9,9 +9,9 @@
             GCP_ARTIFACT_REGISTRY = "asia-south1-docker.pkg.dev/gamerjiautomations/sample-jenkins-test"
             APPROVER_EMAIL = 'megha.sharma@thecloudside.com'
 
-            PM1_EMAIL = 'megha.sharma@thecloudside.com'
+            PM1_EMAIL = 'aishwarya.r@thecloudside.com'
 
-            ADMIN_EMAIL = 'megha.sharma@thecloudside.com'
+            ADMIN_EMAIL = 'aishwarya.r@thecloudside.com'
 
             JOB_URL = "${env.JENKINS_URL}job/${env.JOB_NAME}/"
             PM1_USER = 'Harshit'
