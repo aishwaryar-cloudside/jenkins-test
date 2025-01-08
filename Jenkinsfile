@@ -1,4 +1,3 @@
-
     pipeline {
         agent any
         environment {
@@ -7,7 +6,7 @@
             REPO_NAME = "docker-build"
             GCP_REGION = "asia-south1"
             GCP_ARTIFACT_REGISTRY = "asia-south1-docker.pkg.dev/gamerjiautomations/sample-jenkins-test"
-            APPROVER_EMAIL = 'megha.sharma@thecloudside.com'
+            APPROVER_EMAIL = 'aishwarya.r@thecloudside.com'
 
             PM1_EMAIL = 'aishwarya.r@thecloudside.com'
 
