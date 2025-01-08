@@ -3,20 +3,18 @@
         environment {
             COMMIT_ID = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
             DOCKER_TAG = "latest"
-            REPO_NAME = "docker-build"
+            REPO_NAME = "jenkins-test"
             GCP_REGION = "asia-south1"
             GCP_ARTIFACT_REGISTRY = "asia-south1-docker.pkg.dev/gamerjiautomations/sample-jenkins-test"
             APPROVER_EMAIL = 'aishwarya.r@thecloudside.com'
-
             PM1_EMAIL = 'aishwarya.r@thecloudside.com'
-
             ADMIN_EMAIL = 'aishwarya.r@thecloudside.com'
 
             JOB_URL = "${env.JENKINS_URL}job/${env.JOB_NAME}/"
             PM1_USER = 'Harshit'
             PM2_USER = 'aish'
 
-            ADMIN_USER = 'megha'
+            ADMIN_USER = 'Aish'
         }
         stages {
             stage('prepare') {
