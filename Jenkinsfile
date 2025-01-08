@@ -5,6 +5,7 @@ pipeline {
         DOCKER_TAG = 'latest'
         GCP_REGION = 'asia-south1'
         GCP_ARTIFACT_REGISTRY = "asia-south1-docker.pkg.dev/gamerjiautomations/sample-jenkins-test"
+        APPROVER_EMAIL = 'aishwarya.r@thecloudside.com'
     }
     stages {
         stage('Build Docker Image') {
@@ -42,9 +43,21 @@ pipeline {
                             <p>Check console output <a href="${env.BUILD_URL}">here</a>.</p>
                         """,
                         recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-                        to: 'aishwarya.r@thecloudside.com'
+                        to: env.APPROVER_EMAIL
                     )
                 }
+            }
+        }
+         stage('Wait for Approval') {
+            steps {
+                input message: "Do you approve the deployment?", ok: "Approve"
+                echo "Approval received. Proceeding to the next stage."
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "Deploying the application..."
             }
         }
     }
