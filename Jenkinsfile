@@ -30,5 +30,24 @@ pipeline {
                 }
             }
         }
+       stage('Send Email Notification') {
+            steps {
+                script {
+                    emailext(
+                        subject: "Jenkins Pipeline Execution: ${currentBuild.fullDisplayName}",
+                        body: """
+                            <p>Hello Team,</p>
+                            <p>The Jenkins pipeline for <b>${env.REPO_NAME}</b> has completed.</p>
+                            <p>Status: ${currentBuild.currentResult}</p>
+                            <p>Check console output <a href="${env.BUILD_URL}">here</a>.</p>
+                        """,
+                        recipientProviders: [[$class: 'DevelopersRecipientProvider']],
+                        to: 'aishwarya.r@thecloudside.com'
+                    )
+                }
+            }
+        }
     }
 }
+
+
