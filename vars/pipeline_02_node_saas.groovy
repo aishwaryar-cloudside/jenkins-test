@@ -11,7 +11,8 @@ def call(Map params) {
             PM1_EMAIL = 'aishwarya.r@thecloudside.com'
             PM2_EMAIL = 'aishwarya.r@thecloudside.com'
             ADMIN_EMAIL = 'aishwarya.r@thecloudside.com'
-#JOB_URL = "${env.JENKINS_URL}job/${env.JOB_NAME}/"
+
+            
             JOB_URL = "${env.JENKINS_URL}${env.JOB_NAME}/buildWithParameters/"
             PM1_USER = 'Aishu'
             PM2_USER = 'Aishu'
