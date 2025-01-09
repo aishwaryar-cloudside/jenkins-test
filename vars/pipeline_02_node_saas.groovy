@@ -11,9 +11,8 @@ def call(Map params) {
             PM1_EMAIL = 'aishwarya.r@thecloudside.com'
             PM2_EMAIL = 'aishwarya.r@thecloudside.com'
             ADMIN_EMAIL = 'aishwarya.r@thecloudside.com'
-
-            
-            JOB_URL = "${env.JENKINS_URL}${env.JOB_NAME}/buildWithParameters/"
+    
+            JOB_URL = "${env.JENKINS_URL}job/${env.JOB_NAME}/"
             PM1_USER = 'Aishu'
             PM2_USER = 'Aishu'
             ADMIN_USER = 'admin'
@@ -144,8 +143,8 @@ def sendApprovalRequest(stageName, approverEmail, approverUser, messageName, add
                     <h3>Approval Messages:</h3>
                     <ul>${previousMessages}</ul>
                     <p>${stageName} is required. Please review the changes and approve the job by clicking the link below:</p>
-                    <a href= "${env.JENKINS_URL}job/${env.JOB_NAME}/${env.BUILD_NUMBER}/input/">Approve Job</a>
-#<a href="${JOB_URL}${BUILD_NUMBER}/input/">Approve Job</a>
+                  
+                    <a href="${JOB_URL}${BUILD_NUMBER}/input/">Approve Job</a>
                 </body>
             </html>
         """,
