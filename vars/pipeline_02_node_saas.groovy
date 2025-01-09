@@ -95,7 +95,7 @@ def call(Map params) {
                                             <li><strong>Final Approval:</strong><br>${env.ADDITIONAL_MESSAGE_FINAL}</li>
                                         </ul>
                                         <h3>Jenkins UI:</h3>
-                                        <p><a href="${JOB_URL}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Please approve from Jenkins</a></p>
+                                        <p><a href="${env.BUILD_URL}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Please approve from Jenkins</a></p>
                                     </body>
                                 </html>
                             """,
@@ -143,8 +143,10 @@ def sendApprovalRequest(stageName, approverEmail, approverUser, messageName, add
                     <h3>Approval Messages:</h3>
                     <ul>${previousMessages}</ul>
                     <p>${stageName} is required. Please review the changes and approve the job by clicking the link below:</p>
-                  
-                    <a href="${JOB_URL}${BUILD_NUMBER}/input/">Approve Job</a>
+                  "${env.JENKINS_URL}job/${env.JOB_NAME}/${env.BUILD_NUMBER}/input/"
+
+                    <a href="${env.BUILD_URL}/input/">Approve Job</a>
+
                 </body>
             </html>
         """,
