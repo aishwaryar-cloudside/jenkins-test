@@ -143,7 +143,7 @@ def sendApprovalRequest(stageName, approverEmail, approverUser, messageName, add
                     <h3>Approval Messages:</h3>
                     <ul>${previousMessages}</ul>
                     <p>${stageName} is required. Please review the changes and approve the job by clicking the link below:</p>
-                  "${env.JENKINS_URL}job/${env.JOB_NAME}/${env.BUILD_NUMBER}/input/"
+              
 
                     <a href="${env.BUILD_URL}/input/">Approve Job</a>
 
