@@ -95,7 +95,7 @@ def call(Map params) {
                                             <li><strong>Final Approval:</strong><br>${env.ADDITIONAL_MESSAGE_FINAL}</li>
                                         </ul>
                                         <h3>Jenkins UI:</h3>
-                                        <p><a href="${env.BUILD_URL}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Please approve from Jenkins</a></p>
+                                        <p><a href="${env.BUILD_URL}/input/" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Please approve from Jenkins</a></p>
                                     </body>
                                 </html>
                             """,
