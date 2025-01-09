@@ -36,7 +36,7 @@ pipeline {
 
         stage('First Approval') {
             when {
-                expression { params.deploy == "prod" }
+                expression { params.deploy == "dev" }
             }
             steps {
                 script {
@@ -47,7 +47,7 @@ pipeline {
 
         stage('Final Approval') {
             when {
-                expression { params.deploy == "prod" }
+                expression { params.deploy == "dev" }
             }
             steps {
                 script {
