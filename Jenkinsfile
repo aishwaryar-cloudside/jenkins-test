@@ -1,6 +1,6 @@
 @Library('pipeline_02_node_saas') _
 pipeline_02_node_saas([
-    account: 'gamerjiautomations',
+    account: 'powerplay-446306',
     deploy: 'prod',
     name: 'my-app'
 ])
