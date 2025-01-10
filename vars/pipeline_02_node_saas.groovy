@@ -23,8 +23,8 @@ def call(Map params) {
             PM2_USER = 'Aishu'
             ADMIN_USER = 'admin'
 
-            PRODUCTION_CLUSTER = "prod-cluster.example.com"
-            STAGING_CLUSTER = "staging-cluster.example.com"
+            PRODUCTION_CLUSTER = "ooredoo-powerplay-gke-prod-reg-as1"
+            STAGING_CLUSTER = "ooredoo-powerplay-gke-dev-reg-as1"
         }
         stages {
             stage('Prepare') {
