@@ -211,3 +211,26 @@ def configureEnvironment(Map params, String ecrRegistry) {
     env.GCP_DOCKER_TAG = "${params.name}-v${env.BUILD_NUMBER}.0.0"
     env.GCP_REPOSITORY = "${params.account}${params.deploy == "prod" ? "-prod" : ""}"
 }
+def sendApprovalRequest(approvalType, email, user, messageVar, envVar, additionalMessages = '') {
+    input message: "${approvalType} required by ${user}.",
+        parameters: [
+            string(defaultValue: '', description: 'Enter approval message', name: messageVar)
+        ]
+    env[envVar] = messageVar
+    echo "Approval received from ${user} with message: ${env[envVar]}"
+    emailext(
+        subject: "${approvalType} Request",
+        body: """
+            <html>
+                <body>
+                    <p>Approval request for ${approvalType}.</p>
+                    <p>${additionalMessages}</p>
+                    <p>Approval message: ${env[envVar]}</p>
+                    <p>Please review and respond.</p>
+                </body>
+            </html>
+        """,
+        mimeType: 'text/html',
+        to: email
+    )
+}
