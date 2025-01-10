@@ -14,13 +14,13 @@ def call(Map params) {
             REPO_NAME = "${params.name}${params.deploy == 'prod' ? '-prod' : ''}"
             GCS_BUCKET = "bucket-application-files"
 
-            PM1_EMAIL = 'harshit18.hk@gmail.com'
-            PM2_EMAIL = 'harshit18.hkhk@gmail.com'
-            ADMIN_EMAIL = 'harshit18.hk1@gmail.com'
+            PM1_EMAIL = 'aishwarya.r@thecloudside.com'
+            PM2_EMAIL = 'aishwarya.r@thecloudside.com'
+            ADMIN_EMAIL = 'aishwarya.r@thecloudside.com'
 
             JOB_URL = "${env.JENKINS_URL}job/${env.JOB_NAME}/"
-            PM1_USER = 'harsh'
-            PM2_USER = 'harshit'
+            PM1_USER = 'Aishu'
+            PM2_USER = 'Aishu'
             ADMIN_USER = 'admin'
         }
         stages {
