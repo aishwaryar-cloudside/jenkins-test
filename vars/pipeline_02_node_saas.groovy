@@ -7,7 +7,13 @@ def call(Map params) {
             COMMIT_ID = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
             ECR_DOCKER_TAG = "v${env.BUILD_NUMBER}.0.0"
             GCP_DEFAULT_REGION = "asia-south1"
-
+            GCP_REGISTRY = "asia-south1-docker.pkg.dev"
+            PROJECT_ID = params.account.toString()
+            GCP_DOCKER_TAG = "${params.name}-v${env.BUILD_NUMBER}.0.0"
+            GCP_REPOSITORY = "${params.account}${params.deploy == 'prod' ? '-prod' : ''}"
+            REPO_NAME = "${params.name}${params.deploy == 'prod' ? '-prod' : ''}"
+            GCS_BUCKET = "bucket-application-files"
+            
             PM1_EMAIL = 'aishwarya.r@thecloudside.com'
             PM2_EMAIL = 'aishwarya.r@thecloudside.com'
             ADMIN_EMAIL = 'aishwarya.r@thecloudside.com'
