@@ -166,7 +166,7 @@ def call(Map params) {
                     script {
                         sh '''
                         #!/bin/bash
-                        gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${REPO_NAME}/deployment.yaml .
+                        gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${REPO_NAME}/ooredoo-frontend-api/deployment.yaml .
                         sed -i "s|image:.*|image: ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${REPO_NAME}:${GCP_DOCKER_TAG}|" deployment.yaml
                         mv deployment.yaml deployment-${BUILD_NUMBER}.yaml
                         gcloud container clusters get-credentials ooredoo-powerplay-gke-dev-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
