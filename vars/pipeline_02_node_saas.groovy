@@ -104,6 +104,7 @@ def deployToCluster(String clusterUrl) {
     sh """
         kubectl config set-cluster ${clusterUrl}
         kubectl apply -f deployment.yaml
+        kubectl get pods
     """
 }
 
