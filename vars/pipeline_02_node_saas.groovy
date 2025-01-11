@@ -13,6 +13,7 @@ def call(Map params) {
             GCP_REPOSITORY = "${params.account}${params.deploy == 'prod' ? '-prod' : ''}"
             REPO_NAME = "${params.name}${params.deploy == 'prod' ? '-prod' : ''}"
             GCS_BUCKET = "bucket-application-files"
+            GCS_PATH = "bucket-application-files/powerplay-446306/ooredoo-powerplay/ooredoo-frontend-api"
 
             PM1_EMAIL = 'aishwarya.r@thecloudside.com'
             PM2_EMAIL = 'aishwarya.r@thecloudside.com'
@@ -166,12 +167,16 @@ def call(Map params) {
                     script {
                         sh '''
                         #!/bin/bash
-                        gsutil cp gs://${GCS_BUCKET}/powerplay-446306/ooredoo-powerplay/ooredoo-frontend-api/deployment.yaml .
+                        gsutil cp gs://${GCS_PATH}/deployment.yaml .
                         sed -i "s|image:.*|image: ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${REPO_NAME}:${GCP_DOCKER_TAG}|" deployment.yaml
                         mv deployment.yaml deployment-${BUILD_NUMBER}.yaml
-                        gcloud container clusters get-credentials ooredoo-powerplay-gke-dev-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
+                         if [ "${params.deploy}" == "prod" ]; then
+                            gcloud container clusters get-credentials ooredoo-powerplay-gke-prod-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
+                        else
+                            gcloud container clusters get-credentials ooredoo-powerplay-gke-dev-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
+                        fi
                         kubectl apply -f deployment-${BUILD_NUMBER}.yaml
-                        gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${GCS_BUCKET}/powerplay-446306/ooredoo-powerplay/ooredoo-frontend-api/
+                        gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${GCS_PATH}/
                         '''
                     }
                 }
