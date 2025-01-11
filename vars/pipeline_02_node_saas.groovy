@@ -8,12 +8,13 @@ def call(Map params) {
             ECR_DOCKER_TAG = "v${env.BUILD_NUMBER}.0.0"
             GCP_DEFAULT_REGION = "asia-south1"
             GCP_REGISTRY = "asia-south1-docker.pkg.dev"
-            PROJECT_ID = params.account.toString()
+            ACCOUNT = "${params.account}${params.deploy == 'prod' ? '-prod' : ''}"
+            PROJECT_ID = params.project_id.toString()
             GCP_DOCKER_TAG = "${params.name}-v${env.BUILD_NUMBER}.0.0"
             GCP_REPOSITORY = "${params.account}${params.deploy == 'prod' ? '-prod' : ''}"
             REPO_NAME = "${params.name}${params.deploy == 'prod' ? '-prod' : ''}"
             GCS_BUCKET = "bucket-application-files"
-            GCS_PATH = "bucket-application-files/powerplay-446306/ooredoo-powerplay/ooredoo-frontend-api"
+            ENVIRONMENT = params.deploy.toString()
 
             PM1_EMAIL = 'aishwarya.r@thecloudside.com'
             PM2_EMAIL = 'aishwarya.r@thecloudside.com'
@@ -167,7 +168,7 @@ def call(Map params) {
                     script {
                         sh '''
                         #!/bin/bash
-                        gsutil cp gs://${GCS_PATH}/deployment.yaml .
+                         gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${ACCOUNT}/${REPO_NAME}/deployment.yaml .
                         sed -i "s|image:.*|image: ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${REPO_NAME}:${GCP_DOCKER_TAG}|" deployment.yaml
                         mv deployment.yaml deployment-${BUILD_NUMBER}.yaml
                          if [ "${params.deploy}" == "prod" ]; then
@@ -176,7 +177,7 @@ def call(Map params) {
                             gcloud container clusters get-credentials ooredoo-powerplay-gke-dev-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
                         fi
                         kubectl apply -f deployment-${BUILD_NUMBER}.yaml
-                        gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${GCS_PATH}/
+                        gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${GCS_BUCKET}/${PROJECT_ID}/${REPO_NAME}/
                         '''
                     }
                 }
