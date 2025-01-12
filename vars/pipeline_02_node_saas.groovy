@@ -166,7 +166,7 @@ def call(Map params) {
             stage('Deployed') {
                 steps {
                     script {
-                        sh '''
+                        sh """
                         #!/bin/bash
                         gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${ACCOUNT}/${REPO_NAME}/deployment.yaml .
 
@@ -180,7 +180,7 @@ def call(Map params) {
                         echo "BUILD_NUMBER=${BUILD_NUMBER}"
 
                         
-                        mv deployment.yaml deployment-$BUILD_NUMBER.yaml
+                        mv deployment.yaml deployment-${BUILD_NUMBER}.yaml
                         if [ "${params.deploy}" == "prod" ]; then
                             gcloud container clusters get-credentials ooredoo-powerplay-gke-prod-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
                         else
@@ -188,7 +188,7 @@ def call(Map params) {
                         fi
                         kubectl apply -f deployment-${BUILD_NUMBER}.yaml
                         gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${GCS_BUCKET}/${PROJECT_ID}/${REPO_NAME}/
-                        '''
+                        """
                     }
                 }
                 post {
