@@ -171,7 +171,7 @@ def call(Map params) {
                         def actualDeploymentPath = params.deploy == 'prod' ? "${BASE_PATH}" : "${DEPLOYMENT_PATH}"
                         sh """
                         #!/bin/bash
-                        gsutil cp gs://${actualDeploymentPath}/deployment.yaml .
+                        gsutil cp gs://${DEPLOYMENT_PATH}/deployment.yaml .
                         echo "GCP_REGISTRY=${GCP_REGISTRY}"
                         echo "PROJECT_ID=${PROJECT_ID}"
                         echo "GCP_REPOSITORY=${GCP_REPOSITORY}"
@@ -189,7 +189,7 @@ def call(Map params) {
                             gcloud container clusters get-credentials ooredoo-powerplay-gke-dev-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
                         fi
                         kubectl apply -f deployment-${BUILD_NUMBER}.yaml
-                        gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${GCS_BUCKET}/${PROJECT_ID}/${REPO_NAME}/
+                        gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${actualDeploymentPath}/
                         """
                     }
                 }
