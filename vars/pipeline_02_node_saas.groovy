@@ -168,6 +168,7 @@ def call(Map params) {
                     script {
                         sh '''
                         #!/bin/bash
+                        set -e
                         gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/ooredoo-powerplay/ooredoo-frontend-api/deployment.yaml .
                         sed -i "s|image:.*|image: ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${REPO_NAME}:${GCP_DOCKER_TAG}|" deployment.yaml
                         mv deployment.yaml deployment-${BUILD_NUMBER}.yaml
