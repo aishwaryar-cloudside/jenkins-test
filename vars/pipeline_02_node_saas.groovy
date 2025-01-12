@@ -168,7 +168,7 @@ def call(Map params) {
                     script {
                         sh """
                         #!/bin/bash
-                        gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${ACCOUNT}/${REPO_NAME}/deployment.yaml .                   
+                        gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${ACCOUNT}/${GCP_REPOSITORY}/${REPO_NAME}/deployment.yaml .                   
                         echo "GCP_REGISTRY=${GCP_REGISTRY}"
                         echo "PROJECT_ID=${PROJECT_ID}"
                         echo "GCP_REPOSITORY=${GCP_REPOSITORY}"
