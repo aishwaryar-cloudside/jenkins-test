@@ -186,7 +186,7 @@ def call(Map params) {
                             gcloud container clusters get-credentials ooredoo-powerplay-gke-dev-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
                         fi
                         kubectl apply -f deployment-${BUILD_NUMBER}.yaml
-                        gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${GCS_BUCKET}/${PROJECT_ID}/${REPO_NAME}/
+                        gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${GCS_BUCKET}/${PROJECT_ID}/${GCP_REPOSITORY}/${REPO_NAME}/
                         """
                     }
                 }
