@@ -11,8 +11,8 @@ def call(Map params) {
         
             PROJECT_ID = params.project_id.toString()
             GCP_DOCKER_TAG = "${params.name}-v${env.BUILD_NUMBER}.0.0"
-            GCP_REPOSITORY = "${params.account}${params.deploy == 'prod' ? '-prod' : ''}"
-            REPO_NAME = "${params.name}${params.deploy == 'prod' ? '-prod' : ''}"
+            GCP_REPOSITORY = "${params.account}${params.deploy}"
+            REPO_NAME = "${params.name}${params.deploy}"
             GCS_BUCKET = "bucket-application-files"
             ENVIRONMENT = params.deploy.toString()
 
@@ -174,8 +174,7 @@ def call(Map params) {
                         echo "GCP_REPOSITORY=${GCP_REPOSITORY}"
                         echo "REPO_NAME=${REPO_NAME}"
                         echo "GCP_DOCKER_TAG=${GCP_DOCKER_TAG}"
-                        sed -i 's/-prod//g' deployment.yaml
-
+                    
                         sed -i "s|image:.*|image: ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${REPO_NAME}:${GCP_DOCKER_TAG}|" deployment.yaml
                         echo "BUILD_NUMBER=${BUILD_NUMBER}"
 
