@@ -174,6 +174,7 @@ def call(Map params) {
                         echo "GCP_REPOSITORY=${GCP_REPOSITORY}"
                         echo "REPO_NAME=${REPO_NAME}"
                         echo "GCP_DOCKER_TAG=${GCP_DOCKER_TAG}"
+                        sed -i 's/-prod//g' deployment.yaml
 
                         sed -i "s|image:.*|image: ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${REPO_NAME}:${GCP_DOCKER_TAG}|" deployment.yaml
                         echo "BUILD_NUMBER=${BUILD_NUMBER}"
