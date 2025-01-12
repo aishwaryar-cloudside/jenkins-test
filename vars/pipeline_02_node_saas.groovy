@@ -13,7 +13,7 @@ def call(Map params) {
             GCP_REPOSITORY = "ooredoo-powerplay" 
 
             ACCOUNT = "${params.account}"
-            REPO_NAME = params.deploy == 'prod' ? 'ooredoo-powerplay' : 'ooredoo-frontend-api'
+            REPO_NAME = params.deploy == "prod" ? "ooredoo-powerplay" : "ooredoo-frontend-api"
             
             PROJECT_ID = params.project_id.toString()
             GCP_DOCKER_TAG = "${params.name}-v${env.BUILD_NUMBER}.0.0"
