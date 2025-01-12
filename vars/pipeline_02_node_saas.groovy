@@ -175,11 +175,7 @@ def call(Map params) {
                         echo "GCP_REPOSITORY=${GCP_REPOSITORY}"
                         echo "REPO_NAME=${REPO_NAME}"
                         echo "GCP_DOCKER_TAG=${GCP_DOCKER_TAG}"
-                        replacement="image: ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${REPO_NAME}:${GCP_DOCKER_TAG}"
-                        echo "Replacement string: $replacement"
-
-            # Use sed to replace the line
-                        sed -i "s|image:.*|$replacement|" deployment.yaml
+                        
                         
                         mv deployment.yaml deployment-${BUILD_NUMBER}.yaml
                         if [ "${params.deploy}" == "prod" ]; then
