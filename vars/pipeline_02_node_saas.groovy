@@ -180,7 +180,7 @@ def call(Map params) {
                         echo "BUILD_NUMBER=${BUILD_NUMBER}"
 
                         
-                        mv deployment.yaml deployment-${BUILD_NUMBER}.yaml
+                        mv deployment.yaml deployment-$BUILD_NUMBER.yaml
                         if [ "${params.deploy}" == "prod" ]; then
                             gcloud container clusters get-credentials ooredoo-powerplay-gke-prod-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
                         else
