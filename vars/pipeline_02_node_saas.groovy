@@ -168,7 +168,7 @@ def call(Map params) {
                     script {
                         sh '''
                         #!/bin/bash
-                        gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${ACCOUNT}/${REPO_NAME}/deployment.yaml .
+                        gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/ooredoo-powerplay/ooredoo-frontend-api/deployment.yaml .
                         sed -i "s|image:.*|image: ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${REPO_NAME}:${GCP_DOCKER_TAG}|" deployment.yaml
                         mv deployment.yaml deployment-${BUILD_NUMBER}.yaml
                         if [ "${params.deploy}" == "prod" ]; then
@@ -177,7 +177,7 @@ def call(Map params) {
                             gcloud container clusters get-credentials ooredoo-powerplay-gke-dev-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
                         fi
                         kubectl apply -f deployment-${BUILD_NUMBER}.yaml
-                        gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${GCS_BUCKET}/${PROJECT_ID}/${REPO_NAME}/
+                        gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${GCS_BUCKET}/${PROJECT_ID}/ooredoo-powerplay/ooredoo-frontend-api/
                         '''
                     }
                 }
