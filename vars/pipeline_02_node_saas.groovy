@@ -8,11 +8,11 @@ def call(Map params) {
             ECR_DOCKER_TAG = "v${env.BUILD_NUMBER}.0.0"
             GCP_DEFAULT_REGION = "asia-south1"
             GCP_REGISTRY = "asia-south1-docker.pkg.dev"
-            ACCOUNT = "${params.deploy == 'prod' ? params.account + '-prod' : params.account}"
+            ACCOUNT = "${params.account}"
+            REPO_NAME = "${params.name}" 
             PROJECT_ID = params.project_id.toString()
             GCP_DOCKER_TAG = "${params.name}-v${env.BUILD_NUMBER}.0.0"
             GCP_REPOSITORY = "${params.account}${params.deploy == 'prod' ? '-prod' : ''}"
-            REPO_NAME = "${params.name}${params.deploy == 'prod' ? '-prod' : ''}"
             GCS_BUCKET = "bucket-application-files"
             ENVIRONMENT = params.deploy.toString()
 
