@@ -169,7 +169,7 @@ def call(Map params) {
                         sh '''
                         #!/bin/bash
                         gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${ACCOUNT}/${REPO_NAME}/deployment.yaml .
-                        sed -i 's|image:.*|image: ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${REPO_NAME}:${GCP_DOCKER_TAG}|' deployment.yaml
+                        sed -i "s|image:.*|image: ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${REPO_NAME}:${GCP_DOCKER_TAG}|" deployment.yaml
 
                         mv deployment.yaml deployment-${BUILD_NUMBER}.yaml
                         if [ "${params.deploy}" == "prod" ]; then
