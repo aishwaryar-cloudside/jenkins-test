@@ -17,7 +17,7 @@ def call(Map params) {
             
             PROJECT_ID = params.project_id.toString()
             GCP_DOCKER_TAG = "${params.name}-v${env.BUILD_NUMBER}.0.0"
-            GCP_REPOSITORY = "${params.account}${params.deploy == 'prod' ? '-prod' : ''}"
+            GCP_REPOSITORY = "${params.account}${params.deploy == "prod" ? "-prod" : ""}"
             GCS_BUCKET = "bucket-application-files"
             ENVIRONMENT = params.deploy.toString()
 
