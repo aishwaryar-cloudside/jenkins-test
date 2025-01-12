@@ -8,7 +8,7 @@ def call(Map params) {
             ECR_DOCKER_TAG = "v${env.BUILD_NUMBER}.0.0"
             GCP_DEFAULT_REGION = "asia-south1"
             GCP_REGISTRY = "asia-south1-docker.pkg.dev"
-            ACCOUNT = "${params.account}${params.deploy == 'prod' ? '-prod' : ''}"
+            ACCOUNT = "${params.deploy == 'prod' ? params.account + '-prod' : params.account}"
             PROJECT_ID = params.project_id.toString()
             GCP_DOCKER_TAG = "${params.name}-v${env.BUILD_NUMBER}.0.0"
             GCP_REPOSITORY = "${params.account}${params.deploy == 'prod' ? '-prod' : ''}"
@@ -168,10 +168,10 @@ def call(Map params) {
                     script {
                         sh '''
                         #!/bin/bash
-                         gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${ACCOUNT}/${REPO_NAME}/deployment.yaml .
+                        gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${ACCOUNT}/${REPO_NAME}/deployment.yaml .
                         sed -i "s|image:.*|image: ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${REPO_NAME}:${GCP_DOCKER_TAG}|" deployment.yaml
                         mv deployment.yaml deployment-${BUILD_NUMBER}.yaml
-                         if [ "${params.deploy}" == "prod" ]; then
+                        if [ "${params.deploy}" == "prod" ]; then
                             gcloud container clusters get-credentials ooredoo-powerplay-gke-prod-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
                         else
                             gcloud container clusters get-credentials ooredoo-powerplay-gke-dev-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
