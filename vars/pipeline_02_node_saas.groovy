@@ -8,6 +8,8 @@ def call(Map params) {
             ECR_DOCKER_TAG = "v${env.BUILD_NUMBER}.0.0"
             GCP_DEFAULT_REGION = "asia-south1"
             GCP_REGISTRY = "asia-south1-docker.pkg.dev"
+            BASE_PATH = "${GCS_BUCKET}/${PROJECT_ID}/ooredoo-powerplay/ooredoo-frontend-api/"
+            DEPLOYMENT_PATH = "${BASE_PATH}-${params.deploy}" 
             ACCOUNT = "${params.account}"
             REPO_NAME = "${params.name}" 
             PROJECT_ID = params.project_id.toString()
@@ -166,10 +168,10 @@ def call(Map params) {
             stage('Deployed') {
                 steps {
                     script {
+                        def actualDeploymentPath = params.deploy == 'prod' ? "${BASE_PATH}" : "${DEPLOYMENT_PATH}"
                         sh """
                         #!/bin/bash
-                        gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${GCP_REPOSITORY}/${REPO_NAME}/deployment.yaml .
-
+                        gsutil cp gs://${actualDeploymentPath}/deployment.yaml .
                         echo "GCP_REGISTRY=${GCP_REGISTRY}"
                         echo "PROJECT_ID=${PROJECT_ID}"
                         echo "GCP_REPOSITORY=${GCP_REPOSITORY}"
