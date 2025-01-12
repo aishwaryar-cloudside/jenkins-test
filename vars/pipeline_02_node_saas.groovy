@@ -175,7 +175,8 @@ def call(Map params) {
                         echo "GCP_REPOSITORY=${GCP_REPOSITORY}"
                         echo "REPO_NAME=${REPO_NAME}"
                         echo "GCP_DOCKER_TAG=${GCP_DOCKER_TAG}"
-                        
+                        echo "BUILD_NUMBER=${BUILD_NUMBER}"
+
                         
                         mv deployment.yaml deployment-${BUILD_NUMBER}.yaml
                         if [ "${params.deploy}" == "prod" ]; then
