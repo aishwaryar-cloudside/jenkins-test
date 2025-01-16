@@ -248,6 +248,9 @@ def sendApprovalRequest(stageName, approverEmail, approverUser, messageName, add
         mimeType: 'text/html',
         to: approverEmail
     )
-    def approval = input message: "${stageName} Approval Required", ok: "Approve"
-    echo "${stageName} approved with message: ${approval}"
+    def approval = input message: "${stageName}", parameters: [
+        text(defaultValue: '', description: "Additional Message from ${stageName}", name: messageName)
+    ], submitter: approverUser
+    env[additionalMessageEnvVar] = approval
 }
+
