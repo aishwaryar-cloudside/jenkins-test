@@ -55,6 +55,12 @@ def call(Map params) {
                       //  bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
                     }
                 }
+            } 
+            stage('Wait for Approval') {
+               steps {
+                   input message: "Do you approve the deployment?", ok: "Approve"
+                   echo "Approval received. Proceeding to the next stage."
+                }
             }
             stage('First Approval') {
                 when {
@@ -66,13 +72,6 @@ def call(Map params) {
                     }
                 }
             }
-            stage('Wait for Approval') {
-            steps {
-                input message: "Do you approve the deployment?", ok: "Approve"
-                echo "Approval received. Proceeding to the next stage."
-            }
-        }
-
             stage('Second Approval') {
                 when {
                     expression { params.deploy.toString() == "prod" }
@@ -84,18 +83,6 @@ def call(Map params) {
                     }
                 }
             }
-            stage('Wait for Approval') {
-            steps {
-                input message: "Do you approve the deployment?", ok: "Approve"
-                echo "Approval received. Proceeding to the next stage."
-            }
-        }
-            stage('Wait for Approval') {
-            steps {
-                input message: "Do you approve the deployment?", ok: "Approve"
-                echo "Approval received. Proceeding to the next stage."
-            }
-        }
             stage('Final Approval') {
                 when {
                     expression { params.deploy.toString() == "prod" }
@@ -133,12 +120,6 @@ def call(Map params) {
                     }
                 }
             }
-            stage('Wait for Approval') {
-            steps {
-                input message: "Do you approve the deployment?", ok: "Approve"
-                echo "Approval received. Proceeding to the next stage."
-            }
-        }
             stage('Build') {
                 steps {
                     script {
