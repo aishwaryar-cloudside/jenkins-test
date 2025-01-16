@@ -72,19 +72,12 @@ def call(Map params) {
                     }
                 }
             } 
-            stage('Wait for Approval') {
-               steps {
-                   input message: "Do you approve the deployment?", ok: "Approve"
-                   echo "Approval received. Proceeding to the next stage."
-                }
-            }
             stage('Second Approval') {
                 when {
                     expression { params.deploy.toString() == "prod" }
                 }
                 steps {
                     script {
-                        def firstApprovalMessage = "<li><strong>First Approval:</strong><br>${env.ADDITIONAL_MESSAGE_1}</li>"
                         sendApprovalRequest('Second Approval', PM2_EMAIL, PM2_USER, 'additionalMessage2', 'ADDITIONAL_MESSAGE_2', firstApprovalMessage)
                     }
                 }
@@ -255,8 +248,6 @@ def sendApprovalRequest(stageName, approverEmail, approverUser, messageName, add
         mimeType: 'text/html',
         to: approverEmail
     )
-    def approval = input message: "${stageName}", parameters: [
-        text(defaultValue: '', description: "Additional Message from ${stageName}", name: messageName)
-    ], submitter: approverUser
-    env[additionalMessageEnvVar] = approval
+    def approval = input message: "${stageName} Approval Required", ok: "Approve"
+    echo "${stageName} approved with message: ${approval}"
 }
