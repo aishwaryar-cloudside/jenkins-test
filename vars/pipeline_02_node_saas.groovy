@@ -220,7 +220,7 @@ def setEnvironmentVariables(Map params) {
 
 def configureEnvironment(Map params, String ecrRegistry) {
     env.WORKSPACE = params.account
-    env.REPO_NAME = params.name + (params.deploy == "prod" ? "-prod" : "")
+    env.REPO_NAME = params.name 
     env.COMMIT_ID = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
     env.GCP_REGISTRY = 'asia-south1-docker.pkg.dev'
     env.GCP_DOCKER_TAG = "${params.name}-v${env.BUILD_NUMBER}.0.0"
