@@ -226,26 +226,25 @@ def configureEnvironment(Map params, String ecrRegistry) {
     env.GCP_DOCKER_TAG = "${params.name}-v${env.BUILD_NUMBER}.0.0"
     env.GCP_REPOSITORY = "${params.account}${params.deploy == "prod" ? "-prod" : ""}"
 }
-def sendApprovalRequest(approvalType, email, user, messageVar, envVar, additionalMessages = '') {
-    input message: "${approvalType} required by ${user}.",
-        parameters: [
-            string(defaultValue: '', description: 'Enter approval message', name: messageVar)
-        ]
-    env[envVar] = messageVar
-    echo "Approval received from ${user} with message: ${env[envVar]}"
+def sendApprovalRequest(stageName, approverEmail, approverUser, messageName, additionalMessageEnvVar, previousMessages = '') {
     emailext(
-        subject: "${approvalType} Request",
+        subject: "Approval Request - ${stageName}",
         body: """
             <html>
                 <body>
-                    <p>Approval request for ${approvalType}.</p>
-                    <p>${additionalMessages}</p>
-                    <p>Approval message: ${env[envVar]}</p>
-                    <p>Please review and respond.</p>
+                    <h2>Approval Request - ${stageName}</h2>
+                    <h3>Approval Messages:</h3>
+                    <ul>${previousMessages}</ul>
+                    <p>${stageName} is required. Please review the changes and approve the job by clicking the link below:</p>
+                    <a href="${JOB_URL}${BUILD_NUMBER}/input/">Approve Job</a>
                 </body>
             </html>
         """,
         mimeType: 'text/html',
-        to: email
+        to: approverEmail
     )
+    def approval = input message: "${stageName}", parameters: [
+        text(defaultValue: '', description: "Additional Message from ${stageName}", name: messageName)
+    ], submitter: approverUser
+    env[additionalMessageEnvVar] = approval
 }
