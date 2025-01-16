@@ -71,6 +71,12 @@ def call(Map params) {
                         sendApprovalRequest('First Approval', PM1_EMAIL, PM1_USER, 'additionalMessage1', 'ADDITIONAL_MESSAGE_1')
                     }
                 }
+            } 
+            stage('Wait for Approval') {
+               steps {
+                   input message: "Do you approve the deployment?", ok: "Approve"
+                   echo "Approval received. Proceeding to the next stage."
+                }
             }
             stage('Second Approval') {
                 when {
