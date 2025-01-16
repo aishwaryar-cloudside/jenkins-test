@@ -46,13 +46,13 @@ def call(Map params) {
                         script {
                             echo 'Post build step'
                         }
-                        bitbucketStatusNotify(buildState: 'INPROGRESS', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                       // bitbucketStatusNotify(buildState: 'INPROGRESS', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
                     }
                     failure {
                         script {
                             echo 'Send email on failure'
                         }
-                        bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                      //  bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
                     }
                 }
             }
@@ -134,7 +134,7 @@ def call(Map params) {
                         script {
                             echo 'Send email on failure'
                         }
-                        bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                      //  bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
                     }
                 }
             }
@@ -159,7 +159,7 @@ def call(Map params) {
                         script {
                             echo 'Send email on push failure'
                         }
-                        bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                       // bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
                     }
                 }
             }
@@ -195,13 +195,13 @@ def call(Map params) {
                         script {
                             echo 'Post deployment step'
                         }
-                        bitbucketStatusNotify(buildState: 'SUCCESSFUL', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                       // bitbucketStatusNotify(buildState: 'SUCCESSFUL', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
                     }
                     failure {
                         script {
                             echo 'Send email on failure'
                         }
-                        bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                     //   bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
                     }
                 }
             }
