@@ -190,20 +190,6 @@ def call(Map params) {
                         """
                     }
                 }
-                post {
-                    success {
-                        script {
-                            echo 'Post deployment step'
-                        }
-                        bitbucketStatusNotify(buildState: 'SUCCESSFUL', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
-                    }
-                    failure {
-                        script {
-                            echo 'Send email on failure'
-                        }
-                        bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
-                    }
-                }
             }
         }
     }
