@@ -46,17 +46,17 @@ def call(Map params) {
                         script {
                             echo 'Post build step'
                         }
-                       // bitbucketStatusNotify(buildState: 'INPROGRESS', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                        bitbucketStatusNotify(buildState: 'INPROGRESS', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
                     }
                     failure {
                         script {
                             echo 'Send email on failure'
                         }
-                      //  bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                        bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
                     }
                 }
-            } 
-            stage('Wait for Approval') {
+            }
+             stage('Wait for Approval') {
                steps {
                    input message: "Do you approve the deployment?", ok: "Approve"
                    echo "Approval received. Proceeding to the next stage."
@@ -71,13 +71,14 @@ def call(Map params) {
                         sendApprovalRequest('First Approval', PM1_EMAIL, PM1_USER, 'additionalMessage1', 'ADDITIONAL_MESSAGE_1')
                     }
                 }
-            } 
+            }
             stage('Second Approval') {
                 when {
                     expression { params.deploy.toString() == "prod" }
                 }
                 steps {
                     script {
+                        def firstApprovalMessage = "<li><strong>First Approval:</strong><br>${env.ADDITIONAL_MESSAGE_1}</li>"
                         sendApprovalRequest('Second Approval', PM2_EMAIL, PM2_USER, 'additionalMessage2', 'ADDITIONAL_MESSAGE_2', firstApprovalMessage)
                     }
                 }
@@ -139,10 +140,11 @@ def call(Map params) {
                         script {
                             echo 'Send email on failure'
                         }
-                      //  bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                        bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
                     }
                 }
             }
+            
             stage('Push to Artifact') {
                 steps {
                     script {
@@ -164,7 +166,7 @@ def call(Map params) {
                         script {
                             echo 'Send email on push failure'
                         }
-                       // bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                        bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
                     }
                 }
             }
@@ -195,18 +197,18 @@ def call(Map params) {
                         """
                     }
                 }
-                 post {
+                post {
                     success {
                         script {
                             echo 'Post deployment step'
                         }
-                       // bitbucketStatusNotify(buildState: 'SUCCESSFUL', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                        bitbucketStatusNotify(buildState: 'SUCCESSFUL', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
                     }
                     failure {
                         script {
                             echo 'Send email on failure'
                         }
-                     //   bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                        bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
                     }
                 }
             }
@@ -225,32 +227,52 @@ def setEnvironmentVariables(Map params) {
 
 def configureEnvironment(Map params, String ecrRegistry) {
     env.WORKSPACE = params.account
-    env.REPO_NAME = params.name 
+    env.REPO_NAME = params.name + (params.deploy == "prod" ? "-prod" : "")
     env.COMMIT_ID = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
     env.GCP_REGISTRY = 'asia-south1-docker.pkg.dev'
     env.GCP_DOCKER_TAG = "${params.name}-v${env.BUILD_NUMBER}.0.0"
     env.GCP_REPOSITORY = "${params.account}${params.deploy == "prod" ? "-prod" : ""}"
 }
-def sendApprovalRequest(stageName, approverEmail, approverUser, messageName, additionalMessageEnvVar, previousMessages = '') {
+def sendApprovalRequest(approvalType, email, user, messageVar, envVar, additionalMessages = '') {
+    input message: "${approvalType} required by ${user}.",
+        parameters: [
+            string(defaultValue: '', description: 'Enter approval message', name: messageVar)
+        ]
+    env[envVar] = messageVar
+    echo "Approval received from ${user} with message: ${env[envVar]}"
     emailext(
-        subject: "Approval Request - ${stageName}",
+        subject: "${approvalType} Request",
         body: """
             <html>
                 <body>
-                    <h2>Approval Request - ${stageName}</h2>
-                    <h3>Approval Messages:</h3>
-                    <ul>${previousMessages}</ul>
-                    <p>${stageName} is required. Please review the changes and approve the job by clicking the link below:</p>
-                    <a href="${JOB_URL}${BUILD_NUMBER}/input/">Approve Job</a>
+                    <p>Approval request for ${approvalType}.</p>
+                    <p>${additionalMessages}</p>
+                    <p>Approval message: ${env[envVar]}</p>
+                    <p>Please review and respond.</p>
                 </body>
             </html>
         """,
         mimeType: 'text/html',
-        to: approverEmail
+        to: email
     )
-    def approval = input message: "${stageName}", parameters: [
-        text(defaultValue: '', description: "Additional Message from ${stageName}", name: messageName)
-    ], submitter: approverUser
-    env[additionalMessageEnvVar] = approval
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
