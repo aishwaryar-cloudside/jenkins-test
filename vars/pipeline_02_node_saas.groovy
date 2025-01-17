@@ -8,12 +8,13 @@ def call(Map params) {
             ECR_DOCKER_TAG = "v${env.BUILD_NUMBER}.0.0"
             GCP_DEFAULT_REGION = "asia-south1"
             GCP_REGISTRY = "asia-south1-docker.pkg.dev"
-        
-            PROJECT_ID = params.project_id.toString()
-            GCP_DOCKER_TAG = "${params.name}-v${env.BUILD_NUMBER}.0.0"
-            GCP_REPOSITORY = "${params.account}"
-            REPO_NAME = "${params.name}"
-            APP_NAME = "ooredoo-api-test"
+            ACCOUNT = "${params.account}
+            PROJECT_ID = "powerplay-446306"
+
+            GCP_DOCKER_TAG = "v${env.BUILD_NUMBER}.0.0"
+            GCP_REPOSITORY = "${params.account}${params.deploy == 'prod' ? '-prod' : ''}"
+            APP_NAME = params.name.toString()
+            GCP_PATH = "ooredoo-api-test"
             GCS_BUCKET = "bucket-application-files"
             ENVIRONMENT = params.deploy.toString()
 
@@ -176,7 +177,7 @@ def call(Map params) {
                     script {
                         sh """
                         #!/bin/bash
-                        gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${GCP_REPOSITORY}/${APP_NAME}/deployment.yaml .               
+                        gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${GCP_REPOSITORY}/${GCP_PATH}/deployment.yaml .               
                         echo "GCP_REGISTRY=${GCP_REGISTRY}"
                         echo "PROJECT_ID=${PROJECT_ID}"
                         echo "GCP_REPOSITORY=${GCP_REPOSITORY}"
@@ -194,7 +195,7 @@ def call(Map params) {
                             gcloud container clusters get-credentials ooredoo-powerplay-gke-dev-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
                         fi
                         kubectl apply -f deployment-${BUILD_NUMBER}.yaml
-                        gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${GCS_BUCKET}/${PROJECT_ID}/${GCP_REPOSITORY}/${APP_NAME} 
+                        gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${GCS_BUCKET}/${PROJECT_ID}/${GCP_REPOSITORY}/${GCP_PATH} 
                         """
                     }
                 }
