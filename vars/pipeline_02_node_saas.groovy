@@ -125,7 +125,7 @@ def call(Map params) {
                             input message: "Deploy to production?", ok: "Deploy"
                         }
                         echo "Building Docker image: ${env.REPO_NAME}:${env.GCP_DOCKER_TAG}"
-                        sh "docker build -t ${GCP_REGISTRY}/${PROJECT_ID}/ooredoo:${GCP_DOCKER_TAG} ."
+                        sh "docker build -t ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${APP_NAME}:${GCP_DOCKER_TAG} ."
                     }
                 }
                 post {
@@ -144,7 +144,7 @@ def call(Map params) {
                         sh "docker image ls"
                         sh """
                             gcloud auth configure-docker asia-south1-docker.pkg.dev
-                            docker push ${GCP_REGISTRY}/${PROJECT_ID}/ooredoo:${GCP_DOCKER_TAG}
+                            docker push ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${APP_NAME}:${GCP_DOCKER_TAG}
                         """
                     }
                 }
