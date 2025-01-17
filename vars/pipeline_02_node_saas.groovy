@@ -10,11 +10,9 @@ def call(Map params) {
             GCP_REGISTRY = "asia-south1-docker.pkg.dev"
             ACCOUNT = "${params.account}"
             PROJECT_ID = "powerplay-446306"
-            REPO_NAME = "${params.name}"
             GCP_DOCKER_TAG = "v${env.BUILD_NUMBER}.0.0"
-            GCP_REPOSITORY = "${params.account}"
+            GCP_REPOSITORY = "${params.account}${params.deploy == 'prod' ? '-prod' : ''}"
             APP_NAME = params.name.toString()
-            GCP_PATH = "ooredoo-api-test"
             GCS_BUCKET = "bucket-application-files"
             ENVIRONMENT = params.deploy.toString()
 
@@ -23,8 +21,8 @@ def call(Map params) {
             ADMIN_EMAIL = 'aishwarya.r@thecloudside.com'
 
             JOB_URL = "${env.JENKINS_URL}job/${env.JOB_NAME}/"
-            PM1_USER = 'Aishu'
-            PM2_USER = 'Aishu'
+            PM1_USER = 'aishu'
+            PM2_USER = 'aishu'
             ADMIN_USER = 'admin'
         }
         stages {
@@ -43,27 +41,24 @@ def call(Map params) {
                         sh "printenv"
                     }
                 }
-                post {
+            
+               post {
                     always {
                         script {
-                            echo 'Post build step'
+                            echo 'post build'
                         }
-                        bitbucketStatusNotify(buildState: 'INPROGRESS', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                        bitbucketStatusNotify(buildState: 'INPROGRESS',repoSlug: env.REPO_NAME ,commitId: env.COMMIT_ID)
+                        
                     }
                     failure {
                         script {
-                            echo 'Send email on failure'
+                            echo 'send email'   
                         }
-                        bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                        bitbucketStatusNotify(buildState: 'FAILED',repoSlug: env.REPO_NAME ,commitId: env.COMMIT_ID)
                     }
                 }
             }
-             stage('Wait for Approval') {
-               steps {
-                   input message: "Do you approve the deployment?", ok: "Approve"
-                   echo "Approval received. Proceeding to the next stage."
-                }
-            }
+        
             stage('First Approval') {
                 when {
                     expression { params.deploy.toString() == "prod" }
@@ -74,6 +69,7 @@ def call(Map params) {
                     }
                 }
             }
+
             stage('Second Approval') {
                 when {
                     expression { params.deploy.toString() == "prod" }
@@ -85,6 +81,7 @@ def call(Map params) {
                     }
                 }
             }
+
             stage('Final Approval') {
                 when {
                     expression { params.deploy.toString() == "prod" }
@@ -111,8 +108,6 @@ def call(Map params) {
                                             <li><strong>Second Approval:</strong><br>${env.ADDITIONAL_MESSAGE_2}</li>
                                             <li><strong>Final Approval:</strong><br>${env.ADDITIONAL_MESSAGE_FINAL}</li>
                                         </ul>
-                                        <h3>Jenkins UI:</h3>
-                                        <p><a href="${env.BUILD_URL}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Please approve from Jenkins</a></p>
                                     </body>
                                 </html>
                             """,
@@ -122,6 +117,7 @@ def call(Map params) {
                     }
                 }
             }
+
             stage('Build') {
                 steps {
                     script {
@@ -134,83 +130,51 @@ def call(Map params) {
                 }
                 post {
                     always {
-                        script {
-                            echo 'Post build step'
-                        }
+                        echo 'Post build step'
                     }
                     failure {
-                        script {
-                            echo 'Send email on failure'
-                        }
-                        bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                        echo 'Build failed'
                     }
                 }
             }
-            
+
             stage('Push to Artifact') {
                 steps {
                     script {
                         sh "docker image ls"
-                        sh '''
-                            #!/bin/bash
-                            gcloud auth configure-docker asia-south1-docker.pkg.dev
-                            docker push ${GCP_REGISTRY}/${PROJECT_ID}/ooredoo-prod:${GCP_DOCKER_TAG}
-                        '''
-                    }
-                }
-                post {
-                    always {
-                        script {
-                            echo 'Post artifact push step'
-                        }
-                    }
-                    failure {
-                        script {
-                            echo 'Send email on push failure'
-                        }
-                        bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
-                    }
-                }
-            }
-            stage('Deployed') {
-                steps {
-                    script {
                         sh """
-                        #!/bin/bash
-                        gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${GCP_REPOSITORY}/${GCP_PATH}/deployment.yaml .               
-                        echo "GCP_REGISTRY=${GCP_REGISTRY}"
-                        echo "PROJECT_ID=${PROJECT_ID}"
-                        echo "GCP_REPOSITORY=${GCP_REPOSITORY}"
-                        echo "REPO_NAME=${REPO_NAME}"
-                        echo "GCP_DOCKER_TAG=${GCP_DOCKER_TAG}"
-                    
-                        sed -i "s|image:.*|image: ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${REPO_NAME}:${GCP_DOCKER_TAG}|" deployment.yaml
-                        echo "BUILD_NUMBER=${BUILD_NUMBER}"
-
-                        
-                        mv deployment.yaml deployment-${BUILD_NUMBER}.yaml
-                        if [ "${ENVIRONMENT}" == "prod" ]; then
-                           CLUSTER_NAME="${ACCOUNT}-gke-prod-reg-as1"
-                        else
-                           CLUSTER_NAME="${ACCOUNT}-gke-dev-reg-as1"
-                        fi
-                        kubectl apply -f deployment-${BUILD_NUMBER}.yaml
-                        gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${GCS_BUCKET}/${PROJECT_ID}/${GCP_REPOSITORY}/${GCP_PATH} 
+                            gcloud auth configure-docker asia-south1-docker.pkg.dev
+                            docker push ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${APP_NAME}:${GCP_DOCKER_TAG}
                         """
                     }
                 }
                 post {
-                    success {
-                        script {
-                            echo 'Post deployment step'
-                        }
-                        bitbucketStatusNotify(buildState: 'SUCCESSFUL', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                    always {
+                        echo 'Post artifact push step'
                     }
                     failure {
-                        script {
-                            echo 'Send email on failure'
-                        }
-                        bitbucketStatusNotify(buildState: 'FAILED', repoSlug: env.REPO_NAME, commitId: env.COMMIT_ID)
+                        echo 'Push to Artifact failed'
+                    }
+                }
+            }
+
+            stage('Deploy') {
+                steps {
+                    script {
+                         sh '''
+                        #!/bin/bash
+                        gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${GCP_REPOSITORY}/${APP_NAME}/deployment.yaml .
+                        sed -i "s|image:.*|image: ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${APP_NAME}:${GCP_DOCKER_TAG}|" deployment.yaml
+                        mv deployment.yaml deployment-${BUILD_NUMBER}.yaml
+                        if [ "${ENVIRONMENT}" == "prod" ]; then
+                           CLUSTER_NAME="${ACCOUNT}-powerplay-gke-prod-reg-as1"
+                        else
+                           CLUSTER_NAME="${ACCOUNT}-powerplay-gke-dev-reg-as1"
+                        fi
+                        gcloud container clusters get-credentials ${CLUSTER_NAME} --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
+                        kubectl apply -f deployment-${BUILD_NUMBER}.yaml
+                        gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${GCS_BUCKET}/${PROJECT_ID}/${REPO_NAME}/
+                        '''
                     }
                 }
             }
@@ -218,6 +182,28 @@ def call(Map params) {
     }
 }
 
+def sendApprovalRequest(stageName, approverEmail, approverUser, messageName, additionalMessageEnvVar, previousMessages = '') {
+    emailext(
+        subject: "Approval Request - ${stageName}",
+        body: """
+            <html>
+                <body>
+                    <h2>Approval Request - ${stageName}</h2>
+                    <h3>Approval Messages:</h3>
+                    <ul>${previousMessages}</ul>
+                    <p>${stageName} is required. Please review the changes and approve the job by clicking the link below:</p>
+                    <a href="${BUILD_URL}/input/">Approve Job</a>
+                </body>
+            </html>
+        """,
+        mimeType: 'text/html',
+        to: approverEmail
+    )
+    def approval = input message: "${stageName}", parameters: [
+        text(defaultValue: '', description: "Additional Message from ${stageName}", name: messageName)
+    ], submitter: approverUser
+    env[additionalMessageEnvVar] = approval
+}
 
 def setEnvironmentVariables(Map params) {
     if (params.account == "fantasy-sports") {
@@ -231,30 +217,7 @@ def configureEnvironment(Map params, String ecrRegistry) {
     env.WORKSPACE = params.account
     env.REPO_NAME = params.name + (params.deploy == "prod" ? "-prod" : "")
     env.COMMIT_ID = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-    env.GCP_REGISTRY = 'asia-south1-docker.pkg.dev'
-    env.GCP_DOCKER_TAG = "${params.name}-v${env.BUILD_NUMBER}.0.0"
-    env.GCP_REPOSITORY = "${params.account}${params.deploy == "prod" ? "-prod" : ""}"
-}
-def sendApprovalRequest(approvalType, email, user, messageVar, envVar, additionalMessages = '') {
-    input message: "${approvalType} required by ${user}.",
-        parameters: [
-            string(defaultValue: '', description: 'Enter approval message', name: messageVar)
-        ]
-    env[envVar] = messageVar
-    echo "Approval received from ${user} with message: ${env[envVar]}"
-    emailext(
-        subject: "${approvalType} Request",
-        body: """
-            <html>
-                <body>
-                    <p>Approval request for ${approvalType}.</p>
-                    <p>${additionalMessages}</p>
-                    <p>Approval message: ${env[envVar]}</p>
-                    <p>Please review and respond.</p>
-                </body>
-            </html>
-        """,
-        mimeType: 'text/html',
-        to: email
-    )
+    env.AWS_ECR_REGISTRY = ecrRegistry
+    env.ECR_DOCKER_TAG = params.name + "-v${env.BUILD_NUMBER}.0.0"
+    env.AWS_ECR_REPOSITORY = params.account + (params.deploy == "prod" ? "-prod" : "")
 }
