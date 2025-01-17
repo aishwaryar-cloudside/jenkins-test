@@ -8,7 +8,7 @@ def call(Map params) {
             ECR_DOCKER_TAG = "v${env.BUILD_NUMBER}.0.0"
             GCP_DEFAULT_REGION = "asia-south1"
             GCP_REGISTRY = "asia-south1-docker.pkg.dev"
-            ACCOUNT = "${params.account}
+            ACCOUNT = "${params.account}"
             PROJECT_ID = "powerplay-446306"
 
             GCP_DOCKER_TAG = "v${env.BUILD_NUMBER}.0.0"
