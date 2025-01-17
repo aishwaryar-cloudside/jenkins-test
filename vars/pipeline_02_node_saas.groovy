@@ -161,7 +161,7 @@ def call(Map params) {
             stage('Deploy') {
                 steps {
                     script {
-                         sh """
+                         sh '''
                         #!/bin/bash
                         gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${GCP_REPOSITORY}/${APP_NAME}/deployment.yaml .
                         sed -i "s|image:.*|image: ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${APP_NAME}:${GCP_DOCKER_TAG}|" deployment.yaml
@@ -174,7 +174,7 @@ def call(Map params) {
                         gcloud container clusters get-credentials ${CLUSTER_NAME} --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
                         kubectl apply -f deployment-${BUILD_NUMBER}.yaml
                         gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${GCS_BUCKET}/${PROJECT_ID}/${REPO_NAME}/
-                        """
+                        '''
                     }
                 }
             }
