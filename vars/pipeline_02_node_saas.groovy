@@ -129,7 +129,7 @@ def call(Map params) {
                             input message: "Deploy to production?", ok: "Deploy"
                         }
                         echo "Building Docker image: ${env.REPO_NAME}:${env.GCP_DOCKER_TAG}"
-                        sh "docker build -t ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${REPO_NAME}:${GCP_DOCKER_TAG} ."
+                        sh "docker build -t ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${APP_NAME}:${GCP_DOCKER_TAG} ."
                     }
                 }
                 post {
@@ -189,10 +189,10 @@ def call(Map params) {
 
                         
                         mv deployment.yaml deployment-${BUILD_NUMBER}.yaml
-                        if [ "${params.deploy}" == "prod" ]; then
-                            gcloud container clusters get-credentials ooredoo-powerplay-gke-prod-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
+                        if [ "${ENVIRONMENT}" == "prod" ]; then
+                           CLUSTER_NAME="${ACCOUNT}-gke-prod-reg-as1"
                         else
-                            gcloud container clusters get-credentials ooredoo-powerplay-gke-dev-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
+                           CLUSTER_NAME="${ACCOUNT}-gke-dev-reg-as1"
                         fi
                         kubectl apply -f deployment-${BUILD_NUMBER}.yaml
                         gsutil mv deployment-${BUILD_NUMBER}.yaml gs://${GCS_BUCKET}/${PROJECT_ID}/${GCP_REPOSITORY}/${GCP_PATH} 
