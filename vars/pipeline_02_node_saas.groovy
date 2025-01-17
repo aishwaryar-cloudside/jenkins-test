@@ -166,10 +166,10 @@ def call(Map params) {
                         gsutil cp gs://${GCS_BUCKET}/${PROJECT_ID}/${GCP_REPOSITORY}/${APP_NAME}/deployment.yaml .
                         sed -i "s|image:.*|image: ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${APP_NAME}:${GCP_DOCKER_TAG}|" deployment.yaml
                         mv deployment.yaml deployment-${BUILD_NUMBER}.yaml
-                        if [ "${ENVIRONMENT}" == "prod" ]; then
-                           CLUSTER_NAME="${ACCOUNT}-powerplay-gke-prod-reg-as1"
+                        if [ "${params.deploy}" == "prod" ]; then
+                            gcloud container clusters get-credentials ooredoo-powerplay-gke-prod-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
                         else
-                           CLUSTER_NAME="${ACCOUNT}-powerplay-gke-dev-reg-as1"
+                            gcloud container clusters get-credentials ooredoo-powerplay-gke-dev-reg-as1 --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
                         fi
                         gcloud container clusters get-credentials ${CLUSTER_NAME} --region asia-south1 --project ${PROJECT_ID} --dns-endpoint
                         kubectl apply -f deployment-${BUILD_NUMBER}.yaml
