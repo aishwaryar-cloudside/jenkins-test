@@ -154,7 +154,7 @@ def call(Map params) {
                         sh '''
                             #!/bin/bash
                             gcloud auth configure-docker asia-south1-docker.pkg.dev
-                            docker push ${GCP_REGISTRY}/${PROJECT_ID}/${GCP_REPOSITORY}/${REPO_NAME}:${GCP_DOCKER_TAG}
+                            docker push ${GCP_REGISTRY}/${PROJECT_ID}/ooredoo-prod:${GCP_DOCKER_TAG}
                         '''
                     }
                 }
