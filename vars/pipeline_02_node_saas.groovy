@@ -11,7 +11,7 @@ def call(Map params) {
             ACCOUNT = "${params.account}"
             PROJECT_ID = "powerplay-446306"
             GCP_DOCKER_TAG = "v${env.BUILD_NUMBER}.0.0"
-            GCP_REPOSITORY =  "ooredoo"
+            GCP_REPOSITORY =  "ooredoo-powerplay"
             APP_NAME = "ooredoo-api"
             GCS_BUCKET = "bucket-application-files"
             ENVIRONMENT = params.deploy.toString()
