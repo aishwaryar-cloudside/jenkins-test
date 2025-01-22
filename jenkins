@@ -1,0 +1,8 @@
+pipelines:
+  default:
+    - step:
+        name: Send Notification
+        image: python:3.9
+        script:
+          - pip install requests
+          - python send_notification.py
